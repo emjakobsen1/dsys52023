@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option go_package = "github.com/emjakobsen1/dsys2023-3/proto";
+
+package proto;
+
+// compile command:
+// protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative proto/chatservice.proto
+
+service ChatService
+{
+    rpc Message (stream Request) returns (stream Reply);
+}
+
+enum MessageType {
+    PUBLISH = 0;
+    JOIN = 1;
+    LEAVE = 2;
+}
+
+message Request {
+    int32 clientName = 1;
+    string message = 2;
+    MessageType type = 3;
+    repeated int32 clock = 4;
+}
+
+
+message Reply { 
+    int32 clientName = 1;
+    string message = 2;
+    MessageType type =3;
+    repeated int32 clock = 4;
+}
