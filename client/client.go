@@ -10,7 +10,7 @@ import (
 	"os"
 	"strings"
 
-	gRPC "github.com/emjakobsen1/dsys2023-3/proto"
+	gRPC "github.com/emjakobsen1/dsys52023/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
