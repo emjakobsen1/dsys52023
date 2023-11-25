@@ -18,21 +18,12 @@ type replicaServer struct {
 	id int32
 }
 
-func (s *replicaServer) Bid(ctx context.Context, req *proto.Amount) (*proto.Ack, error) {
+func (s *replicaServer) Bid2Replicas(ctx context.Context, req *proto.Amount) (*proto.Ack, error) {
 	// Implement your Bid logic here for the replica server
 	// You can access req.Id and req.Amount for processing
 	// Return an Ack message based on your logic
-	fmt.Printf("Received Bid request from frontend: ID=%d, Amount=%d\n", req.Id, req.Amount)
-	rep := &proto.Ack{State: 0, Id: s.id}
-	return rep, nil
-}
-
-func (s *replicaServer) Bid2(ctx context.Context, req *proto.Amount) (*proto.Ack, error) {
-	// Implement your Bid logic here for the replica server
-	// You can access req.Id and req.Amount for processing
-	// Return an Ack message based on your logic
-	fmt.Printf("Received Bid request from frontend: ID=%d, Amount=%d\n", req.Id, req.Amount)
-	rep := &proto.Ack{State: 0, Id: s.id}
+	fmt.Printf("Received Bid request from frontend: ID=%d, Amount=%d sendSeq %d\n", req.Id, req.Amount, req.SendSeq)
+	rep := &proto.Ack{State: 0, Id: s.id, SendSeq: req.SendSeq}
 	return rep, nil
 }
 

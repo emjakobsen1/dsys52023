@@ -13,7 +13,10 @@ import (
 // Define a struct to represent the frontend server
 type frontendServer struct {
 	proto.UnimplementedAuctionServiceServer
-	replicas map[int32]proto.AuctionServiceClient
+	replicas  map[int32]proto.AuctionServiceClient
+	sendSeq   int32
+	delivered map[int32]int
+	buffer    []proto.Ack
 }
 
 func main() {
@@ -39,8 +42,15 @@ func main() {
 
 	// Initialize the frontend server with the replica clients
 	frontend := &frontendServer{
-		replicas: replicaClients,
+		replicas:  replicaClients,
+		sendSeq:   0,
+		delivered: make(map[int32]int),
+		buffer:    []proto.Ack{},
 	}
+	frontend.delivered[5000] = 0
+	frontend.delivered[5001] = 0
+	frontend.delivered[5002] = 0
+	frontend.delivered[5003] = 0
 
 	// Start the frontend server to handle incoming requests
 	grpcServer := grpc.NewServer()
@@ -63,34 +73,50 @@ func main() {
 	}
 }
 func (s *frontendServer) Bid(ctx context.Context, req *proto.Amount) (*proto.Ack, error) {
-	// Implement your Bid logic here for the replica server
-	// You can access req.Id and req.Amount for processing
-	// Return an Ack message based on your logic
-
-	rep := &proto.Ack{State: 0, Id: 5003}
-	s.ForwardToReplicas(ctx, req)
-	return rep, nil
-}
-func (s *frontendServer) Bid2(ctx context.Context, req *proto.Amount) (*proto.Ack, error) {
-	// Implement your Bid logic here for the replica server
+	// Implement your Bid logic here for the client requewst
 	// You can access req.Id and req.Amount for processing
 	// Return an Ack message based on your logic
 
 	rep := &proto.Ack{State: 0, Id: 5003}
 
+	req.SendSeq = int32(s.sendSeq)
+	s.Broadcast(ctx, req)
+	s.sendSeq++
+	return rep, nil
+}
+func (s *frontendServer) Bid2replicas(ctx context.Context, req *proto.Amount, sendSeq int) (*proto.Ack, error) {
+	// Implement your Bid logic here for the frontends request to the replica server
+	// You can access req.Id and req.Amount for processing
+	// Return an Ack message based on your logic
+
+	rep := &proto.Ack{State: 0, Id: 5003}
+
 	return rep, nil
 }
 
-func (s *frontendServer) ForwardToReplicas(ctx context.Context, req *proto.Amount) (*proto.Ack, error) {
+func (s *frontendServer) Broadcast(ctx context.Context, req *proto.Amount) (*proto.Ack, error) {
 	// Forward the request to each replica
+
 	for _, replicaClient := range s.replicas {
-		_, err := replicaClient.Bid2(ctx, req)
+		rep, err := replicaClient.Bid2Replicas(ctx, req)
 		if err != nil {
 			fmt.Printf("Failed to forward request to replica: %v\n", err)
 		}
+		s.buffer = append(s.buffer, *rep)
+
+		//fmt.Printf("Received ack from replica: ID=%d, State=%d\n", rep.Id, rep.State)
+	}
+
+	for _, msg := range s.buffer {
+		if s.sendSeq == msg.SendSeq {
+			fmt.Printf("Received ack from replica: ID=%d, State=%d\n", msg.Id, msg.State)
+			s.delivered[msg.Id]++
+		}
+
 	}
 
 	// Return an Ack indicating success or failure
+	//fmt.Printf("Received ack from replicas?: ID=%d, Amount=%d sendSeq %d\n", req.Id, req.Amount, req.SendSeq)
 	return &proto.Ack{State: proto.State_SUCCESS}, nil
 }
 

@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuctionService_Bid_FullMethodName  = "/proto.AuctionService/Bid"
-	AuctionService_Bid2_FullMethodName = "/proto.AuctionService/Bid2"
+	AuctionService_Bid_FullMethodName          = "/proto.AuctionService/Bid"
+	AuctionService_Bid2Replicas_FullMethodName = "/proto.AuctionService/Bid2Replicas"
 )
 
 // AuctionServiceClient is the client API for AuctionService service.
@@ -28,7 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuctionServiceClient interface {
 	Bid(ctx context.Context, in *Amount, opts ...grpc.CallOption) (*Ack, error)
-	Bid2(ctx context.Context, in *Amount, opts ...grpc.CallOption) (*Ack, error)
+	Bid2Replicas(ctx context.Context, in *Amount, opts ...grpc.CallOption) (*Ack, error)
 }
 
 type auctionServiceClient struct {
@@ -48,9 +48,9 @@ func (c *auctionServiceClient) Bid(ctx context.Context, in *Amount, opts ...grpc
 	return out, nil
 }
 
-func (c *auctionServiceClient) Bid2(ctx context.Context, in *Amount, opts ...grpc.CallOption) (*Ack, error) {
+func (c *auctionServiceClient) Bid2Replicas(ctx context.Context, in *Amount, opts ...grpc.CallOption) (*Ack, error) {
 	out := new(Ack)
-	err := c.cc.Invoke(ctx, AuctionService_Bid2_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, AuctionService_Bid2Replicas_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (c *auctionServiceClient) Bid2(ctx context.Context, in *Amount, opts ...grp
 // for forward compatibility
 type AuctionServiceServer interface {
 	Bid(context.Context, *Amount) (*Ack, error)
-	Bid2(context.Context, *Amount) (*Ack, error)
+	Bid2Replicas(context.Context, *Amount) (*Ack, error)
 	mustEmbedUnimplementedAuctionServiceServer()
 }
 
@@ -73,8 +73,8 @@ type UnimplementedAuctionServiceServer struct {
 func (UnimplementedAuctionServiceServer) Bid(context.Context, *Amount) (*Ack, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Bid not implemented")
 }
-func (UnimplementedAuctionServiceServer) Bid2(context.Context, *Amount) (*Ack, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Bid2 not implemented")
+func (UnimplementedAuctionServiceServer) Bid2Replicas(context.Context, *Amount) (*Ack, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Bid2Replicas not implemented")
 }
 func (UnimplementedAuctionServiceServer) mustEmbedUnimplementedAuctionServiceServer() {}
 
@@ -107,20 +107,20 @@ func _AuctionService_Bid_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuctionService_Bid2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AuctionService_Bid2Replicas_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Amount)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuctionServiceServer).Bid2(ctx, in)
+		return srv.(AuctionServiceServer).Bid2Replicas(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuctionService_Bid2_FullMethodName,
+		FullMethod: AuctionService_Bid2Replicas_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuctionServiceServer).Bid2(ctx, req.(*Amount))
+		return srv.(AuctionServiceServer).Bid2Replicas(ctx, req.(*Amount))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -137,8 +137,8 @@ var AuctionService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuctionService_Bid_Handler,
 		},
 		{
-			MethodName: "Bid2",
-			Handler:    _AuctionService_Bid2_Handler,
+			MethodName: "Bid2Replicas",
+			Handler:    _AuctionService_Bid2Replicas_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
