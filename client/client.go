@@ -13,29 +13,32 @@ import (
 	"google.golang.org/grpc"
 )
 
+var ID int
+
 func main() {
-	// Parse command-line arguments to determine the frontend port
-	if len(os.Args) != 2 {
-		fmt.Println("Usage: client <frontend_port>")
-		os.Exit(1)
-	}
-
-	frontendPort, err := strconv.Atoi(os.Args[1])
+	// Usage: go run client.go <id> 5003 from a terminal in /client. e.g. go run client.go 1 5003
+	// Starts a client sending to the frontend at 5003 with ID 1.
+	// It supports the commandline actions, bid and result.
+	// bid takes an argument on the form: bid <integer>, with integer beingthe actual bid, e.g. bid 200
+	var err error
+	ID, err = strconv.Atoi(os.Args[1])
 	if err != nil {
-		log.Fatalf("Invalid frontend_port: %v", err)
+		log.Fatalf("Invalid client ID: %v", err)
 	}
 
-	// Create a gRPC connection to the frontend server
+	frontendPort, err := strconv.Atoi(os.Args[2])
+	if err != nil {
+		log.Fatalf("Invalid frontend port: %v", err)
+	}
+
 	conn, err := grpc.Dial(fmt.Sprintf("localhost:%d", frontendPort), grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("Could not connect to frontend server on port %d: %v", frontendPort, err)
+		log.Fatalf("Could not connect to frontend port %d: %v", frontendPort, err)
 	}
 	defer conn.Close()
 
-	// Create a client for the frontend server
 	client := proto.NewAuctionServiceClient(conn)
 
-	// Start an infinite loop to continuously prompt for user input and send requests
 	for {
 		action, value := getUserInput()
 
@@ -43,7 +46,7 @@ func main() {
 		case "bid":
 			sendBidRequest(client, int32(value))
 		case "result":
-			fmt.Println("Not implemented yet!")
+			sendResultRequest(client)
 		default:
 			fmt.Println("Invalid action. Supported actions: bid, result")
 		}
@@ -53,7 +56,7 @@ func main() {
 func getUserInput() (string, int) {
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Print("Enter action and value (e.g., bid 100 or result): ")
+	fmt.Print("Write result to query the auction, bid <integer> to bid")
 	input, _ := reader.ReadString('\n')
 	input = strings.TrimSpace(input)
 	parts := strings.Fields(input)
@@ -62,7 +65,7 @@ func getUserInput() (string, int) {
 		return parts[0], 0
 	}
 	if len(parts) < 2 {
-		fmt.Println("Invalid input format. Supported format: action value")
+		fmt.Println("Invalid input format")
 		return "", 0
 	}
 
@@ -75,22 +78,39 @@ func getUserInput() (string, int) {
 
 	return action, value
 }
+
+// Send bid request to the frontend
 func sendBidRequest(client proto.AuctionServiceClient, value int32) {
-	// Create a context
+
 	ctx := context.Background()
 
-	// Create a Bid request with the specified value
 	req := &proto.Amount{
-		Id:     123, // Provide an appropriate ID
+		Id:     int32(ID),
 		Amount: value,
 	}
 
-	// Send the Bid request to the frontend
 	ack, err := client.Bid(ctx, req)
 	if err != nil {
 		log.Fatalf("Error sending Bid request: %v", err)
 	}
 
+	fmt.Printf("Received Ack response: State=%s, ID=%d\n", ack.State, ack.Id)
+}
+
+// Sends result request to the frontend
+func sendResultRequest(client proto.AuctionServiceClient) {
+
+	ctx := context.Background()
+
+	req := &proto.Void{
+		Id: int32(ID),
+	}
+
+	outcome, err := client.Result(ctx, req)
+	if err != nil {
+		log.Fatalf("Error sending Bid request: %v", err)
+	}
+
 	// Process the Ack response
-	fmt.Printf("Received Ack response: State=%d, ID=%d\n", ack.State, ack.Id)
+	fmt.Printf("Received outcome response: Highest bid: %d, ID: %d\n", outcome.HighestBid, outcome.Id)
 }

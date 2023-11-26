@@ -19,8 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuctionService_Bid_FullMethodName          = "/proto.AuctionService/Bid"
-	AuctionService_Bid2Replicas_FullMethodName = "/proto.AuctionService/Bid2Replicas"
+	AuctionService_Bid_FullMethodName             = "/proto.AuctionService/Bid"
+	AuctionService_Bid2Replicas_FullMethodName    = "/proto.AuctionService/Bid2Replicas"
+	AuctionService_Result_FullMethodName          = "/proto.AuctionService/Result"
+	AuctionService_Result2Replicas_FullMethodName = "/proto.AuctionService/Result2Replicas"
 )
 
 // AuctionServiceClient is the client API for AuctionService service.
@@ -29,6 +31,8 @@ const (
 type AuctionServiceClient interface {
 	Bid(ctx context.Context, in *Amount, opts ...grpc.CallOption) (*Ack, error)
 	Bid2Replicas(ctx context.Context, in *Amount, opts ...grpc.CallOption) (*Ack, error)
+	Result(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Outcome, error)
+	Result2Replicas(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Outcome, error)
 }
 
 type auctionServiceClient struct {
@@ -57,12 +61,32 @@ func (c *auctionServiceClient) Bid2Replicas(ctx context.Context, in *Amount, opt
 	return out, nil
 }
 
+func (c *auctionServiceClient) Result(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Outcome, error) {
+	out := new(Outcome)
+	err := c.cc.Invoke(ctx, AuctionService_Result_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *auctionServiceClient) Result2Replicas(ctx context.Context, in *Void, opts ...grpc.CallOption) (*Outcome, error) {
+	out := new(Outcome)
+	err := c.cc.Invoke(ctx, AuctionService_Result2Replicas_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuctionServiceServer is the server API for AuctionService service.
 // All implementations must embed UnimplementedAuctionServiceServer
 // for forward compatibility
 type AuctionServiceServer interface {
 	Bid(context.Context, *Amount) (*Ack, error)
 	Bid2Replicas(context.Context, *Amount) (*Ack, error)
+	Result(context.Context, *Void) (*Outcome, error)
+	Result2Replicas(context.Context, *Void) (*Outcome, error)
 	mustEmbedUnimplementedAuctionServiceServer()
 }
 
@@ -75,6 +99,12 @@ func (UnimplementedAuctionServiceServer) Bid(context.Context, *Amount) (*Ack, er
 }
 func (UnimplementedAuctionServiceServer) Bid2Replicas(context.Context, *Amount) (*Ack, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Bid2Replicas not implemented")
+}
+func (UnimplementedAuctionServiceServer) Result(context.Context, *Void) (*Outcome, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Result not implemented")
+}
+func (UnimplementedAuctionServiceServer) Result2Replicas(context.Context, *Void) (*Outcome, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Result2Replicas not implemented")
 }
 func (UnimplementedAuctionServiceServer) mustEmbedUnimplementedAuctionServiceServer() {}
 
@@ -125,6 +155,42 @@ func _AuctionService_Bid2Replicas_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuctionService_Result_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Void)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuctionServiceServer).Result(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuctionService_Result_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuctionServiceServer).Result(ctx, req.(*Void))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuctionService_Result2Replicas_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Void)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuctionServiceServer).Result2Replicas(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuctionService_Result2Replicas_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuctionServiceServer).Result2Replicas(ctx, req.(*Void))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuctionService_ServiceDesc is the grpc.ServiceDesc for AuctionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -139,6 +205,14 @@ var AuctionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Bid2Replicas",
 			Handler:    _AuctionService_Bid2Replicas_Handler,
+		},
+		{
+			MethodName: "Result",
+			Handler:    _AuctionService_Result_Handler,
+		},
+		{
+			MethodName: "Result2Replicas",
+			Handler:    _AuctionService_Result2Replicas_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
