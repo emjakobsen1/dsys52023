@@ -7,3 +7,6 @@ Frontend (5004): Ack: SUCCESS req by 2
 Frontend (5004): Outcome: 21 req by: 2 
 Frontend (5004): Outcome: 21 req by: 2 
 Frontend (5004): Outcome: 21 req by: 2 
+Frontend (5004): Failed to forward request to replica: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing: dial tcp [::1]:5001: connectex: No connection could be made because the target machine actively refused it."
+Frontend (5004): Ack: SUCCESS req by 2
+Frontend (5004): Ack: SUCCESS req by 2

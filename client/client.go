@@ -119,8 +119,8 @@ func sendResultRequest(client proto.AuctionServiceClient) {
 		log.Fatalf("Error sending Bid request: %v", err)
 	}
 
-	l.Printf("-> Result: %d\n", outcome.HighestBid)
-	sl.Printf("-> Result: %d\n", outcome.HighestBid)
+	l.Printf("-> Outcome: %d\n", outcome.HighestBid)
+	sl.Printf("-> Outcome: %d\n", outcome.HighestBid)
 }
 
 func setLog(id int) (*log.Logger, *log.Logger) {
