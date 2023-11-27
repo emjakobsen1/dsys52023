@@ -1,4 +1,4 @@
-###DSYS5: Replication
+### DSYS5: Replication
 
 This is a distributed system with clients, frontend(s) and replica servers.
 
@@ -40,7 +40,7 @@ To query the state of the auction. Calls to "bid" will receive messages with SUC
 
 The first call to bid starts the auction, which will run for 1 min. Unfortunately, the system has no UI for starting and ending auctions. If you want to start a new auction, you have to restart all the replicas so their timeout resets. 
 
-####Logs
+#### Logs
 
 Each process has its respective log in /logs. The client's log contain the responses from the requests to the frontend. The frontend logs replies from its request to the replicas, and the replicas log request from the frontend. 
 
@@ -60,7 +60,7 @@ Replicas log: Contains the replica's ID and the request received from the fronte
 All these logs messaged are also combined in a shared log file, name "combined.txt". 
 
 
-####Crash
+#### Crash
 
 To crash a replica, type ctrl + C (Windows) in the terminal. This will be present in the frontend's log as this error:
 ```sh
