@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strconv"
@@ -14,12 +15,14 @@ import (
 )
 
 var ID int
+var l, sl *log.Logger
 
 func main() {
 	// Usage: go run client.go <id> 5003 from a terminal in /client. e.g. go run client.go 1 5003
 	// Starts a client sending to the frontend at 5003 with ID 1.
 	// It supports the commandline actions, bid and result.
-	// bid takes an argument on the form: bid <integer>, with integer beingthe actual bid, e.g. bid 200
+	// bid takes an argument on the form: bid <integer>, with integer being the actual bid, e.g. bid 200
+
 	var err error
 	ID, err = strconv.Atoi(os.Args[1])
 	if err != nil {
@@ -39,6 +42,10 @@ func main() {
 
 	client := proto.NewAuctionServiceClient(conn)
 
+	// client's log, shared log
+	l, sl = setLog(ID)
+
+	fmt.Printf("Client (%d) - supported actions: \n 	bid <integer argument>\n 	result \n First bid register the bidder and starts the auction.\n", ID)
 	for {
 		action, value := getUserInput()
 
@@ -56,7 +63,7 @@ func main() {
 func getUserInput() (string, int) {
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Print("Write result to query the auction, bid <integer> to bid")
+	//fmt.Print("Write result to query the auction, bid <integer> to bid \n")
 	input, _ := reader.ReadString('\n')
 	input = strings.TrimSpace(input)
 	parts := strings.Fields(input)
@@ -79,7 +86,7 @@ func getUserInput() (string, int) {
 	return action, value
 }
 
-// Send bid request to the frontend
+// Sends bid request to the frontend
 func sendBidRequest(client proto.AuctionServiceClient, value int32) {
 
 	ctx := context.Background()
@@ -94,7 +101,8 @@ func sendBidRequest(client proto.AuctionServiceClient, value int32) {
 		log.Fatalf("Error sending Bid request: %v", err)
 	}
 
-	fmt.Printf("Received Ack response: State=%s, ID=%d\n", ack.State, ack.Id)
+	l.Printf("-> Ack: %s\n", ack.State)
+	sl.Printf("-> Ack: %s\n", ack.State)
 }
 
 // Sends result request to the frontend
@@ -111,6 +119,35 @@ func sendResultRequest(client proto.AuctionServiceClient) {
 		log.Fatalf("Error sending Bid request: %v", err)
 	}
 
-	// Process the Ack response
-	fmt.Printf("Received outcome response: Highest bid: %d, ID: %d\n", outcome.HighestBid, outcome.Id)
+	l.Printf("-> Result: %d\n", outcome.HighestBid)
+	sl.Printf("-> Result: %d\n", outcome.HighestBid)
+}
+
+func setLog(id int) (*log.Logger, *log.Logger) {
+
+	clearLog(fmt.Sprintf("../logs/client-%v.txt", id))
+
+	clientLogFile, err := os.OpenFile(fmt.Sprintf("../logs/client-%v.txt", id), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("Error opening replica log file: %v", err)
+	}
+
+	sharedLogFile, err := os.OpenFile("../logs/combined.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("Error opening shared log file: %v", err)
+	}
+
+	clientLogger := log.New(io.MultiWriter(os.Stdout, clientLogFile), fmt.Sprintf("Client (%v): ", id), log.Flags())
+	sharedLogger := log.New(sharedLogFile, fmt.Sprintf("Client (%v): ", id), log.Flags())
+
+	clientLogger.SetFlags(0)
+	sharedLogger.SetFlags(0)
+
+	return clientLogger, sharedLogger
+}
+
+func clearLog(filename string) {
+	if err := os.Truncate(filename, 0); err != nil {
+		log.Printf("Failed to truncate log file %v: %v\n", filename, err)
+	}
 }

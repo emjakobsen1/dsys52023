@@ -29,7 +29,7 @@ message Amount {
 }
 message Ack {
     string state = 1;
-    int32 id = 2;
+    int32 reqId = 2;
     int32 sendSeq =3;
 }
 message Void {
@@ -38,7 +38,7 @@ message Void {
 }
 message Outcome {
     int32 highestBid = 1;
-    int32 id = 2;
+    int32 reqId = 2;
     int32 sendSeq =3;
 }
 

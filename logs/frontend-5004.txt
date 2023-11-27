@@ -1,0 +1,9 @@
+Frontend (5004): Ack: SUCCESS req by 2
+Frontend (5004): Ack: SUCCESS req by 2
+Frontend (5004): Ack: SUCCESS req by 2
+Frontend (5004): Ack: SUCCESS req by 2
+Frontend (5004): Ack: SUCCESS req by 2
+Frontend (5004): Ack: SUCCESS req by 2
+Frontend (5004): Outcome: 21 req by: 2 
+Frontend (5004): Outcome: 21 req by: 2 
+Frontend (5004): Outcome: 21 req by: 2 

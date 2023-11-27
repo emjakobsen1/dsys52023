@@ -1,0 +1,127 @@
+Replica (5000): Bid: 10 from 2 (sendSeq 0)
+Replica (5001): Bid: 10 from 2 (sendSeq 0)
+Replica (5002): Bid: 10 from 2 (sendSeq 0)
+Frontend (5003): Ack: SUCCESS req by 2
+Frontend (5003): Ack: SUCCESS req by 2
+Frontend (5003): Ack: SUCCESS req by 2
+Client (2): -> Ack: SUCCESS
+Replica (5000): Result from 1 (sendSeq 1)
+Replica (5001): Result from 1 (sendSeq 1)
+Replica (5002): Result from 1 (sendSeq 1)
+Frontend (5003): Outcome: 10 req by: 1 
+Frontend (5003): Outcome: 10 req by: 1 
+Frontend (5003): Outcome: 10 req by: 1 
+Client (1): -> Result: 10
+Replica (5000): Bid: 20000 from 1 (sendSeq 2)
+Replica (5001): Bid: 20000 from 1 (sendSeq 2)
+Replica (5002): Bid: 20000 from 1 (sendSeq 2)
+Frontend (5003): Ack: SUCCESS req by 1
+Frontend (5003): Ack: SUCCESS req by 1
+Frontend (5003): Ack: SUCCESS req by 1
+Client (1): -> Ack: SUCCESS
+Replica (5000): Bid: 3 from 2 (sendSeq 3)
+Replica (5001): Bid: 3 from 2 (sendSeq 3)
+Replica (5002): Bid: 3 from 2 (sendSeq 3)
+Frontend (5003): Ack: FAIL req by 2
+Frontend (5003): Ack: FAIL req by 2
+Frontend (5003): Ack: FAIL req by 2
+Client (2): -> Ack: FAIL
+Replica (5001): Result from 2 (sendSeq 4)
+Replica (5002): Result from 2 (sendSeq 4)
+Replica (5000): Result from 2 (sendSeq 4)
+Frontend (5003): Outcome: 20000 req by: 2 
+Frontend (5003): Outcome: 20000 req by: 2 
+Frontend (5003): Outcome: 20000 req by: 2 
+Client (2): -> Result: 20000
+Replica (5000): Bid: 20001 from 2 (sendSeq 5)
+Replica (5001): Bid: 20001 from 2 (sendSeq 5)
+Replica (5002): Bid: 20001 from 2 (sendSeq 5)
+Frontend (5003): Ack: SUCCESS req by 2
+Frontend (5003): Ack: SUCCESS req by 2
+Frontend (5003): Ack: SUCCESS req by 2
+Client (2): -> Ack: SUCCESS
+Replica (5000): Bid: 1000000 from 2 (sendSeq 6)
+Replica (5001): Bid: 1000000 from 2 (sendSeq 6)
+Frontend (5003): Failed to forward request to replica: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing: dial tcp [::1]:5002: connectex: No connection could be made because the target machine actively refused it."
+Frontend (5003): Ack: SUCCESS req by 2
+Frontend (5003): Ack: SUCCESS req by 2
+Client (2): -> Ack: SUCCESS
+Replica (5000): Result from 1 (sendSeq 7)
+Replica (5001): Result from 1 (sendSeq 7)
+Frontend (5003): Failed to forward request to replica: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing: dial tcp [::1]:5002: connectex: No connection could be made because the target machine actively refused it."
+Frontend (5003): Outcome: 1000000 req by: 1 
+Frontend (5003): Outcome: 1000000 req by: 1 
+Client (1): -> Result: 1000000
+Replica (5000): Result from 1 (sendSeq 8)
+Frontend (5003): Failed to forward request to replica: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing: dial tcp [::1]:5001: connectex: No connection could be made because the target machine actively refused it."
+Frontend (5003): Failed to forward request to replica: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing: dial tcp [::1]:5002: connectex: No connection could be made because the target machine actively refused it."
+Frontend (5003): Outcome: 1000000 req by: 1 
+Client (1): -> Result: 1000000
+Replica (5000): Result from 1 (sendSeq 0)
+Replica (5001): Result from 1 (sendSeq 0)
+Replica (5002): Result from 1 (sendSeq 0)
+Frontend (5003): Outcome: 0 req by: 1 
+Frontend (5003): Outcome: 0 req by: 1 
+Frontend (5003): Outcome: 0 req by: 1 
+Client (1): -> Result: 0
+Replica (5000): Bid: 20 from 2 (sendSeq 0)
+Replica (5001): Bid: 20 from 2 (sendSeq 0)
+Replica (5002): Bid: 20 from 2 (sendSeq 0)
+Frontend (5004): Ack: SUCCESS req by 2
+Frontend (5004): Ack: SUCCESS req by 2
+Frontend (5004): Ack: SUCCESS req by 2
+Client (2): -> Ack: SUCCESS
+Replica (5000): Bid: 20 from 1 (sendSeq 1)
+Replica (5001): Bid: 20 from 1 (sendSeq 1)
+Replica (5002): Bid: 20 from 1 (sendSeq 1)
+Frontend (5003): Ack: FAIL req by 1
+Frontend (5003): Ack: FAIL req by 1
+Frontend (5003): Ack: FAIL req by 1
+Client (1): -> Ack: FAIL
+Replica (5000): Result from 1 (sendSeq 2)
+Replica (5001): Result from 1 (sendSeq 2)
+Replica (5002): Result from 1 (sendSeq 2)
+Frontend (5003): Outcome: 20 req by: 1 
+Frontend (5003): Outcome: 20 req by: 1 
+Frontend (5003): Outcome: 20 req by: 1 
+Client (1): -> Result: 20
+Replica (5000): Bid: 21 from 2 (sendSeq 1)
+Replica (5001): Bid: 21 from 2 (sendSeq 1)
+Replica (5002): Bid: 21 from 2 (sendSeq 1)
+Frontend (5004): Ack: SUCCESS req by 2
+Frontend (5004): Ack: SUCCESS req by 2
+Frontend (5004): Ack: SUCCESS req by 2
+Client (2): -> Ack: SUCCESS
+Replica (5000): Result from 2 (sendSeq 2)
+Replica (5001): Result from 2 (sendSeq 2)
+Replica (5002): Result from 2 (sendSeq 2)
+Frontend (5004): Outcome: 21 req by: 2 
+Frontend (5004): Outcome: 21 req by: 2 
+Frontend (5004): Outcome: 21 req by: 2 
+Client (2): -> Result: 21
+Replica (5000): Bid: -1 from 1 (sendSeq 3)
+Replica (5001): Bid: -1 from 1 (sendSeq 3)
+Replica (5002): Bid: -1 from 1 (sendSeq 3)
+Frontend (5003): Ack: FAIL req by 1
+Frontend (5003): Ack: FAIL req by 1
+Frontend (5003): Ack: FAIL req by 1
+Client (1): -> Ack: FAIL
+Replica (5002): Result from 1 (sendSeq 4)
+Replica (5000): Result from 1 (sendSeq 4)
+Replica (5001): Result from 1 (sendSeq 4)
+Frontend (5003): Outcome: 21 req by: 1 
+Frontend (5003): Outcome: 21 req by: 1 
+Frontend (5003): Outcome: 21 req by: 1 
+Client (1): -> Result: 21
+Frontend (5004): Failed to forward request to replica: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing: dial tcp [::1]:5001: connectex: No connection could be made because the target machine actively refused it."
+Replica (5002): Bid: 202 from 2 (sendSeq 3)
+Replica (5000): Bid: 202 from 2 (sendSeq 3)
+Frontend (5004): Ack: SUCCESS req by 2
+Frontend (5004): Ack: SUCCESS req by 2
+Client (2): -> Ack: SUCCESS
+Replica (5000): Bid: 202 from 1 (sendSeq 5)
+Frontend (5003): Failed to forward request to replica: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing: dial tcp [::1]:5001: connectex: No connection could be made because the target machine actively refused it."
+Replica (5002): Bid: 202 from 1 (sendSeq 5)
+Frontend (5003): Ack: FAIL req by 1
+Frontend (5003): Ack: FAIL req by 1
+Client (1): -> Ack: FAIL
