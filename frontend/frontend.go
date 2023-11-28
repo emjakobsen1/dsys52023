@@ -8,7 +8,6 @@ import (
 	"net"
 	"os"
 	"strconv"
-	"sync"
 
 	proto "github.com/emjakobsen1/dsys52023/proto"
 	"google.golang.org/grpc"
@@ -17,14 +16,13 @@ import (
 var ID int
 var l, sl *log.Logger
 
-type frontendServer struct {
+type frontend struct {
 	proto.UnimplementedAuctionServiceServer
 	replicas      map[int32]proto.AuctionServiceClient
 	sendSeq       int32
 	delivered     map[int32]int
 	ackbuffer     []proto.Ack
 	outcomebuffer []proto.Outcome
-	mutex         sync.Mutex
 }
 
 func main() {
@@ -51,7 +49,7 @@ func main() {
 		replicaClients[port] = proto.NewAuctionServiceClient(conn)
 	}
 
-	frontend := &frontendServer{
+	frontend := &frontend{
 		replicas:      replicaClients,
 		sendSeq:       0,
 		delivered:     make(map[int32]int),
@@ -72,7 +70,7 @@ func main() {
 	}
 
 }
-func (s *frontendServer) Bid(ctx context.Context, req *proto.Amount) (*proto.Ack, error) {
+func (s *frontend) Bid(ctx context.Context, req *proto.Amount) (*proto.Ack, error) {
 
 	req.SendSeq = int32(s.sendSeq)
 	rep, err := s.BroadcastBid(ctx, req)
@@ -88,7 +86,8 @@ func (s *frontendServer) Bid(ctx context.Context, req *proto.Amount) (*proto.Ack
 
 }
 
-func (s *frontendServer) BroadcastBid(ctx context.Context, req *proto.Amount) (*proto.Ack, error) {
+// Broadcast bid requests to the replicas
+func (s *frontend) BroadcastBid(ctx context.Context, req *proto.Amount) (*proto.Ack, error) {
 
 	var ack *proto.Ack
 	for _, replicaClient := range s.replicas {
@@ -113,6 +112,7 @@ func (s *frontendServer) BroadcastBid(ctx context.Context, req *proto.Amount) (*
 	}
 
 	if replies {
+		s.ackbuffer = nil
 		return ack, nil
 	}
 
@@ -121,7 +121,7 @@ func (s *frontendServer) BroadcastBid(ctx context.Context, req *proto.Amount) (*
 
 }
 
-func (s *frontendServer) Result(ctx context.Context, req *proto.Void) (*proto.Outcome, error) {
+func (s *frontend) Result(ctx context.Context, req *proto.Void) (*proto.Outcome, error) {
 
 	req.SendSeq = int32(s.sendSeq)
 	rep, err := s.BroadcastResult(ctx, req)
@@ -137,7 +137,8 @@ func (s *frontendServer) Result(ctx context.Context, req *proto.Void) (*proto.Ou
 
 }
 
-func (s *frontendServer) BroadcastResult(ctx context.Context, req *proto.Void) (*proto.Outcome, error) {
+// Broadcast result requests to the replicas
+func (s *frontend) BroadcastResult(ctx context.Context, req *proto.Void) (*proto.Outcome, error) {
 
 	var outcome *proto.Outcome
 	for _, replicaClient := range s.replicas {
@@ -163,6 +164,7 @@ func (s *frontendServer) BroadcastResult(ctx context.Context, req *proto.Void) (
 	}
 
 	if replies {
+		s.outcomebuffer = nil
 		return outcome, nil
 	}
 

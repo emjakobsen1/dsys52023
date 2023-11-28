@@ -1,4 +1,4 @@
+Client (2): -> Outcome: 100
 Client (2): -> Ack: SUCCESS
 Client (2): -> Ack: SUCCESS
-Client (2): -> Result: 21
-Client (2): -> Ack: SUCCESS
+Client (2): -> Outcome: 120

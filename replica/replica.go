@@ -15,7 +15,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-type replicaServer struct {
+type replica struct {
 	proto.UnimplementedAuctionServiceServer
 	id              int32
 	bidders         map[int32]int32
@@ -27,7 +27,7 @@ type replicaServer struct {
 var l, sl *log.Logger
 
 // First call registers the bidder and starts the auction.
-func (r *replicaServer) Bid2Replicas(ctx context.Context, req *proto.Amount) (*proto.Ack, error) {
+func (r *replica) Bid2Replicas(ctx context.Context, req *proto.Amount) (*proto.Ack, error) {
 
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
@@ -52,7 +52,7 @@ func (r *replicaServer) Bid2Replicas(ctx context.Context, req *proto.Amount) (*p
 	return &proto.Ack{State: "FAIL", ReqId: req.Id, SendSeq: req.SendSeq}, nil
 }
 
-func (r *replicaServer) Result2Replicas(ctx context.Context, req *proto.Void) (*proto.Outcome, error) {
+func (r *replica) Result2Replicas(ctx context.Context, req *proto.Void) (*proto.Outcome, error) {
 
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
@@ -94,7 +94,7 @@ func main() {
 	l, sl = setLog(port)
 
 	grpcServer := grpc.NewServer()
-	r := &replicaServer{
+	r := &replica{
 		id:      int32(port),
 		bidders: make(map[int32]int32),
 		started: false,

@@ -1,5 +1,0 @@
-Client (1): -> Ack: FAIL
-Client (1): -> Result: 20
-Client (1): -> Ack: FAIL
-Client (1): -> Result: 21
-Client (1): -> Ack: FAIL
