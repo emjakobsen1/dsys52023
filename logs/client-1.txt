@@ -1,0 +1,6 @@
+Client (1): -> Ack: SUCCESS
+Client (1): -> Outcome: 110
+Client (1): -> Ack: FAIL
+Client (1): -> Outcome: 120
+Client (1): -> Ack: FAIL
+Client (1): -> Outcome: 120
